@@ -29,9 +29,9 @@ async function getBuys(zip?: string): Promise<BulkBuy[]> {
 export default async function FeedPage({
   searchParams,
 }: {
-  searchParams: { zip?: string };
+  searchParams: Promise<{ zip?: string }>;
 }) {
-  const zip = searchParams.zip;
+  const { zip } = await searchParams;
   const buys = await getBuys(zip);
 
   return (

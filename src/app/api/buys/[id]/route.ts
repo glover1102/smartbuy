@@ -3,10 +3,11 @@ import { prisma } from "@/src/lib/prisma";
 
 export async function GET(
   _req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   const buy = await prisma.bulkBuy.findUnique({
-    where: { id: params.id },
+    where: { id },
     include: {
       organizer: { select: { displayName: true, email: true } },
       claims: {

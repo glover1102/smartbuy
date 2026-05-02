@@ -6,7 +6,7 @@ import { CommentSchema } from "@/src/lib/zod-schemas";
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) {
@@ -19,9 +19,10 @@ export async function POST(
     return NextResponse.json({ error: "Validation error" }, { status: 400 });
   }
 
+  const { id } = await params;
   const comment = await prisma.comment.create({
     data: {
-      bulkBuyId: params.id,
+      bulkBuyId: id,
       userId: session.user.id,
       body: parsed.data.body,
     },

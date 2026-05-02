@@ -6,14 +6,15 @@ import { StatusUpdateSchema } from "@/src/lib/zod-schemas";
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const buy = await prisma.bulkBuy.findUnique({ where: { id: params.id } });
+  const { id } = await params;
+  const buy = await prisma.bulkBuy.findUnique({ where: { id } });
   if (!buy) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
@@ -28,7 +29,7 @@ export async function PATCH(
   }
 
   const updated = await prisma.bulkBuy.update({
-    where: { id: params.id },
+    where: { id },
     data: { status: parsed.data.status },
   });
 

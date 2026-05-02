@@ -38,9 +38,10 @@ async function getBuy(id: string): Promise<BuyDetail | null> {
   }
 }
 
-export default async function BuyDetailPage({ params }: { params: { id: string } }) {
+export default async function BuyDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   const [buy, session] = await Promise.all([
-    getBuy(params.id),
+    getBuy(id),
     getServerSession(authOptions),
   ]);
 
